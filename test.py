@@ -8,8 +8,8 @@ import torch
 import numpy as np
 import os
 
-# os.environ["CUDA_VISIBLE_DEVICES"] = "3"
-# device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+os.environ["CUDA_VISIBLE_DEVICES"] = "1"
+device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 
 def load_data():

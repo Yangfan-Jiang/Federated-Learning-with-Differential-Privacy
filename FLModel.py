@@ -18,7 +18,7 @@ class FLClient(nn.Module):
     #      2. - batch gradient descend (DONE)
     def __init__(self, model, output_size, data, lr, E, batch_size, device=None):
         """
-        :param model: ML model  model.train() method should be implemented
+        :param model: ML model's training process should be implemented
         :param data: (tuple) dataset, all data in client side is used as training data
         :param lr: learning rate
         :param E: epoch of local update
