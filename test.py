@@ -98,5 +98,3 @@ if __name__ == '__main__':
     fl_entity.global_update()
 
 
-
-
