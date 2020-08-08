@@ -14,5 +14,6 @@ This is a simple implementation of **federated learning (FL)** with the **noisin
 ## Usage
 
 ## Reference
-[1] McMahan, Brendan, Eider Moore, Daniel Ramage, Seth Hampson, and Blaise Aguera y Arcas. Communication-Efficient Learning of Deep Networks from Decentralized Data. In *Proc. *Artificial *Intelligence *and *Statistics *(AISTATS), 2017.
-[2] K. Wei, J. Li, M. Ding, C. Ma, H. H. Yang, F. Farokhi, S. Jin, T. Q. S. Quek, H. V. Poor, Federated Learning with Differential Privacy: Algorithms and Performance Analysis. In *IEEE *Transactions *on *Information *Forensics *& *Security, 15, pp. 3454-3469, 2020.
+[1] McMahan, Brendan, Eider Moore, Daniel Ramage, Seth Hampson, and Blaise Aguera y Arcas. Communication-Efficient Learning of Deep Networks from Decentralized Data. In *Proc. Artificial Intelligence and Statistics (AISTATS)*, 2017.
+
+[2] K. Wei, J. Li, M. Ding, C. Ma, H. H. Yang, F. Farokhi, S. Jin, T. Q. S. Quek, H. V. Poor, Federated Learning with Differential Privacy: Algorithms and Performance Analysis. In *IEEE Transactions on Information Forensics & Security*, 15, pp. 3454-3469, 2020.
