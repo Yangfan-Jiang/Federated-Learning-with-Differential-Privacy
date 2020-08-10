@@ -75,8 +75,12 @@ class FLServer(nn.Module):
 
         self.device = fl_par['device']
         self.client_num = fl_par['client_num']
-        self.E = fl_par['tot_E']    # total epochs for global iteration
-        self.C = fl_par['C']        # (float) C in [0, 1]
+
+        self.E = fl_par['tot_E']            # total epochs for global iteration
+        self.C = fl_par['C']                # (float) C in [0, 1]
+        self.epsilon = fl_par['epsilon']    # (ε, δ)
+        self.delta = fl_par['delta']
+
         self.data = torch.tensor(fl_par['data'][-1][0]).to(self.device)    # test set
         self.target = torch.tensor(fl_par['data'][-1][1]).to(self.device)  # target label
         self.input_size = int(self.data.shape[1])
@@ -92,7 +96,7 @@ class FLServer(nn.Module):
 
         self.global_model = fl_par['model'](self.input_size, fl_par['output_size']).to(self.device)
         self.weight = np.array([client.data_size*1.0 for client in self.clients])
-        # self.weight /= np.sum(self.weight)
+
 
     def aggregated(self, idxs_users):
         """FedAvg Algorithm"""
