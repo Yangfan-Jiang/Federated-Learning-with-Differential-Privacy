@@ -34,7 +34,7 @@ class FLClient(nn.Module):
             batch_size=self.BATCH_SIZE,
             shuffle=True
         )
-
+        
         self.lr = lr
         self.E = E
         self.model = model(data[0].shape[1], output_size).to(self.device)
