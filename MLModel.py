@@ -18,10 +18,10 @@ class LogisticRegression(nn.Module):
         return self.model(x)
 
 
-class DeepNN(nn.Module):
+class MLP(nn.Module):
     """A simple implementation of Deep Neural Network model"""
     def __init__(self, num_feature, output_size):
-        super(DeepNN, self).__init__()
+        super(MLP, self).__init__()
         self.hidden = 200
         self.model = nn.Sequential(
             nn.Linear(num_feature, self.hidden),

@@ -8,14 +8,15 @@ import torch
 import numpy as np
 import os
 
-os.environ["CUDA_VISIBLE_DEVICES"] = "1"
-device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+# os.environ["CUDA_VISIBLE_DEVICES"] = "3"
+# device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 
 def load_data():
     # data sets
     data = []
     for i in range(1, 7):
+        # d = np.load("/home/jyfan/data/bank/non-iid/3clients/bank" + str(i) + ".npy")
         d = np.load("/home/jyfan/data/bank/non-iid/bank" + str(i) + ".npy")
         data.append((d[:, :16], d[:, 16:].flatten()))
     return data
@@ -96,5 +97,7 @@ if __name__ == '__main__':
     warnings.filterwarnings("ignore")
     fl_entity = FLServer(fl_par).to(device)
     fl_entity.global_update()
+
+
 
 
