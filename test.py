@@ -81,7 +81,7 @@ if __name__ == '__main__':
     client_num = 10
     d = load_mnist(client_num)
     #d = load_p(latent=10)
-    ffl_par = {
+    fl_par = {
         'output_size': 10,
         'client_num': client_num,
         'model': MLP,
