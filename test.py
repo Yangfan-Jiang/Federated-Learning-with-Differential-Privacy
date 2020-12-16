@@ -79,25 +79,25 @@ if __name__ == '__main__':
     """
     # d = load_data()
     client_num = 10
-    #d = load_mnist(client_num)
-    d = load_p(latent=10)
-    fl_par = {
+    d = load_mnist(client_num)
+    #d = load_p(latent=10)
+    ffl_par = {
         'output_size': 10,
         'client_num': client_num,
-        'model': DeepNN,
+        'model': MLP,
         'data': d,
         'lr': 0.001,
         'E': 5,
         'C': 1,
-        'tot_E': 100,
+        'epsilon': 1.0,
+        'delta': 1e-4,
+        'clip': 200,
+        'tot_E': 10,
         'batch_size': 32,
         'device': device
     }
     import warnings
     warnings.filterwarnings("ignore")
     fl_entity = FLServer(fl_par).to(device)
-    fl_entity.global_update()
-
-
-
+    fl_entity.global_update_grad()
 
