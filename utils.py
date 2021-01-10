@@ -38,7 +38,7 @@ def mnist_noniid(dataset, num_users):
     :param num_users:
     :return:
     """
-    num_shards, num_imgs = 200, 300
+    num_shards, num_imgs = 100, 600
     idx_shard = [i for i in range(num_shards)]
     dict_users = {i: np.array([], dtype='int64') for i in range(num_users)}
     idxs = np.arange(num_shards*num_imgs)
@@ -51,7 +51,7 @@ def mnist_noniid(dataset, num_users):
 
     # divide and assign
     for i in range(num_users):
-        rand_set = set(np.random.choice(idx_shard, 2, replace=False))
+        rand_set = set(np.random.choice(idx_shard, int(num_shards/num_users), replace=False))
         idx_shard = list(set(idx_shard) - rand_set)
         for rand in rand_set:
             dict_users[i] = np.concatenate((dict_users[i], idxs[rand*num_imgs:(rand+1)*num_imgs]), axis=0)
