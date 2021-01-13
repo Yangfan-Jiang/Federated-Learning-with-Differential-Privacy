@@ -132,9 +132,10 @@ class FLServer(nn.Module):
         for name in new_par:
             new_par[name] = torch.zeros(new_par[name].shape).to(self.device)
         for idx, par in enumerate(model_par):
+            w = self.weight[idxs_users[idx]] / np.sum(self.weight[:])
             for name in new_par:
-                new_par[name] += par[name] * (self.weight[idxs_users[idx]] / np.sum(self.weight[idxs_users]))
-                
+                # new_par[name] += par[name] * (self.weight[idxs_users[idx]] / np.sum(self.weight[idxs_users]))
+                new_par[name] += par[name] * (w / self.C)
         self.global_model.load_state_dict(copy.deepcopy(new_par))
         return self.global_model.state_dict().copy()
 
