@@ -29,7 +29,7 @@ fl_param = {
     'data': d,
     'lr': lr,           # learning rate
     'E': 5,             # number of local iterations
-    'sigma': 4,         # noise level
+    'sigma': 1,         # noise level
     'clip': 4,          # clipping norm
     'batch_size': 64,   # number of samples per-batch
     'device': device
