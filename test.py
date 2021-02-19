@@ -47,7 +47,7 @@ fl_param = {
     'lr': lr,
     'E': 5,
     'C': 1,
-    'sigma': 1,
+    'sigma': 0.5,
     'clip': 4,
     'batch_size': 256,
     'device': device

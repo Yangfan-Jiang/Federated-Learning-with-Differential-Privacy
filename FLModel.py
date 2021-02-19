@@ -47,43 +47,6 @@ class FLClient(nn.Module):
         """receive global model from aggregator (server)"""
         self.model.load_state_dict(copy.deepcopy(model_par))
         self.recv_model.load_state_dict(copy.deepcopy(model_par))
-        """Client Based DP-FedAVG with Low Sensitivity (CDP-FedAVG-LS) Algorithm"""
-        criterion = nn.CrossEntropyLoss()
-        losses = []
-        new_param = copy.deepcopy(self.model.state_dict())
-        for name in new_param:
-            new_param[name] = torch.zeros(new_param[name].shape).to(self.device)
-        for batch_x, batch_y in self.data_loader:
-            self.batch_model = copy.deepcopy(self.recv_model)
-            self.batch_model.train()
-            optimizer = torch.optim.SGD(self.batch_model.parameters(), lr=self.lr, momentum=0.9)
-            for e in range(self.E):
-                batch_x, batch_y = batch_x.to(self.device), batch_y.to(self.device)
-                pred_y = self.batch_model(batch_x)
-                loss = criterion(pred_y, batch_y.long())
-                optimizer.zero_grad()
-                loss.backward()
-                losses += [loss.item()]
-
-                # bound l2 sensitivity (gradient clipping)
-                grads = dict(self.batch_model.named_parameters())
-                for name in grads:
-                    grads[name].grad = clip_grad(grads[name].grad, self.clip)
-
-                optimizer.step()
-            # print(np.mean(losses))
-            # local aggregate: theta = (1/B) * sum theta_b
-            for name in self.batch_model.state_dict():
-                new_param[name] += (1.0 / len(self.data_loader)) * self.batch_model.state_dict()[name]
-            losses = []
-        # Add Gaussian noise
-        # 1. compute l2-sensitivity by Thm. 2
-        # 2. add noise
-        sensitivity = 2 * self.lr * self.clip / self.data_size + \
-                      (1.0 / len(self.data_loader)) * (self.E - 1) * 2 * self.lr * self.clip
-        for name in self.batch_model.state_dict():
-            new_param[name] += gaussian_noise_ls(new_param[name].shape, sensitivity, self.sigma, device=self.device)
-        self.model.load_state_dict(copy.deepcopy(new_param))
 
     def update(self):
         """local model update"""
@@ -154,11 +117,7 @@ class FLServer(nn.Module):
 
         self.device = fl_par['device']
         self.client_num = fl_par['client_num']
-
-        self.E = fl_par['tot_E']  # total epochs for global iteration
         self.C = fl_par['C']  # (float) C in [0, 1]
-        self.epsilon = fl_par['epsilon']  # (ε, δ)
-        self.delta = fl_par['delta']
         self.clip = fl_par['clip']
 
         #self.data = torch.tensor(fl_par['data'][-1][0]).to(self.device)  # test set
