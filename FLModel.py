@@ -69,6 +69,9 @@ class FLClient(nn.Module):
         # Add Gaussian noise
         # 1. compute l2-sensitivity by Client Based DP-FedAVG Alg.
         # 2. add noise
+        # The sensitivity calculation formula used below is derived from an unpublished manuscript
+        # Please derive and compute the l1/l2-sensitivity very carefully
+        # Do not use the sensitivity calculation code below directly on any research experiments
         sensitivity = 2 * self.lr * self.clip / self.data_size + (self.E - 1) * 2 * self.lr * self.clip
         new_param = copy.deepcopy(self.model.state_dict())
         for name in new_param:

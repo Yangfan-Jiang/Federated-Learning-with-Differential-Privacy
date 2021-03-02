@@ -8,10 +8,13 @@ This is a simple implementation of **federated learning (FL)** with the **noisin
 - NumPy
 
 ## Files
-- FLModel.py: definition of the FL client and FL server class.
-- MLModel.py: CNN model for MNIST and FEMNIST datasets
-- DPMechanisms.py: generate gaussian noise
-- utils.py: sample MNIST in a non-i.i.d. manner
+> FLModel.py: definition of the FL client and FL server class
+
+> MLModel.py: CNN model for MNIST and FEMNIST datasets
+
+> DPMechanisms.py: generate gaussian noise
+
+> utils.py: sample MNIST in a non-i.i.d. manner
 
 ## Usag
 1. Download MNIST dataset
