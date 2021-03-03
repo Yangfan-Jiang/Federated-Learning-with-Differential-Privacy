@@ -106,6 +106,15 @@ class FLClient(nn.Module):
                 for name in params:
                     grad[name] += copy.deepcopy(params[name].grad)
             losses = []
+        # Add Gaussian noise
+        # 1. compute l2-sensitivity by Client Based DP-FedAVG Alg.
+        # 2. add noise
+        # The sensitivity calculation formula used below is derived from an unpublished manuscript
+        # Please derive and compute the l1/l2-sensitivity very carefully
+        # Do not use the sensitivity calculation code below directly on any research experiments
+        sensitivity = 2 * self.lr * self.clip / self.data_size + (self.E - 1) * 2 * self.lr * self.clip
+        for name in grad:
+            grad[name] += gaussian_noise_ls(grad[name].shape, sensitivity, self.sigma, device=self.device)
         return grad.copy()
         
 
@@ -199,7 +208,6 @@ class FLServer(nn.Module):
         acc = self.test_acc_femnist()
         return acc
 
-
     def aggregated_grad(self, idxs_users, grads):
         """FedAvg - Update model using gradients"""
         agg_grad = copy.deepcopy(grads[0])
@@ -209,22 +217,23 @@ class FLServer(nn.Module):
         for idx, grad in enumerate(grads):
             w = self.weight[idxs_users[idx]] / np.sum(self.weight[idxs_users])
             for name in grad:
-                g = gaussian_noise(grad[name], self.clip, self.epsilon, self.delta, device=self.device) * self.lr
+                g = grad[name] * self.lr
                 agg_grad[name] += g * (w / self.C)
 
-        for name in self.global_model.state_dict():
+        #for name in self.global_model.state_dict():
+        for name in agg_grad:
             self.global_model.state_dict()[name] -= agg_grad[name]
         return self.global_model.state_dict().copy()
 
     def global_update_grad(self):
-        for e in range(self.E):
-            idxs_users = np.random.choice(range(len(self.clients)), int(self.C * len(self.clients)), replace=False)
-            grads = []
-            for idx in idxs_users:
-                grads.append(copy.deepcopy(self.clients[idx].update_grad()))
-            self.broadcast(self.aggregated_grad(idxs_users, grads))
-            acc = self.test_acc()
-            print("global epochs = {:d}, acc = {:.4f}".format(e + 1, acc))
+        # for e in range(self.E):
+        idxs_users = np.random.choice(range(len(self.clients)), int(self.C * len(self.clients)), replace=False)
+        grads = []
+        for idx in idxs_users:
+            grads.append(copy.deepcopy(self.clients[idx].update_grad()))
+        self.broadcast(self.aggregated_grad(idxs_users, grads))
+        acc = self.test_acc_femnist()
+        return acc
 
     def set_lr(self, lr):
         for c in self.clients:
