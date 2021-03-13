@@ -31,20 +31,14 @@ def gaussian_noise_ls(data_shape, s, sigma, device=None):
     return torch.normal(0, sigma * s, data_shape).to(device)
 
 
-def gaussian_noise(grad, s, epsilon, delta, device=None):
+def gaussian_noise(data_shape, s, epsilon, delta, device=None):
     """
     generate Gaussian Noise, disturb the gradient matrix
     """
-    # Clipping
-    g_shape = grad.shape
-    grad.flatten()
-    grad = grad / np.max((1, float(torch.norm(grad, p=2)) / s))
-    grad.to(device)
-    
     c = np.sqrt(2*np.log(1.25 / delta))
     sigma = c * s / epsilon
-    noise = torch.normal(0, sigma, grad.shape).to(device)
-    return grad + noise
+    noise = torch.normal(0, sigma, data_shape).to(device)
+    return noise
 
 
 def gaussian_noise_mask(grad, s, epsilon, delta, mask, device):
