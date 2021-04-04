@@ -12,33 +12,11 @@ def clip_grad(grad, clip):
     return grad
 
 
-def tight_gaussian(data, s, c2, q, t, delta, epsilon, device=None):
-    """
-    Gaussian Mechanism [Abadi et al., 2016]
-    sigma >= c2*(q sqrt{T log1/δ})/epsilon
-    """
-    sigma = c2 * q * np.sqrt(t*np.log(1/delta)) / epsilon
-    sigma *= (s**2)
-    noise = torch.normal(0, sigma, data.shape).to(device)
-    return data + noise
-
-
-def gaussian_noise_ls(data_shape, s, sigma, device=None):
+def gaussian_noise(data_shape, s, sigma, device=None):
     """
     Gaussian noise for CDP-FedAVG-LS Algorithm
     """
-    # print("sigma:", sigma * s)
     return torch.normal(0, sigma * s, data_shape).to(device)
-
-
-def gaussian_noise(data_shape, s, epsilon, delta, device=None):
-    """
-    generate Gaussian Noise, disturb the gradient matrix
-    """
-    c = np.sqrt(2*np.log(1.25 / delta))
-    sigma = c * s / epsilon
-    noise = torch.normal(0, sigma, data_shape).to(device)
-    return noise
 
 
 def gaussian_noise_mask(grad, s, epsilon, delta, mask, device):

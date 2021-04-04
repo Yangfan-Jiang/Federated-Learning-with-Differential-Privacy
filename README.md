@@ -5,6 +5,7 @@ This is a simple implementation of **Federated Learning (FL)** with **Differenti
 
 ## Requirements
 - PyTorch
+- tensorflow-privacy
 - NumPy
 
 ## Files
@@ -24,22 +25,27 @@ This is a simple implementation of **Federated Learning (FL)** with **Differenti
 ### FL model parameters
 ```python
 # code segment in test.py/test.ipynb
-lr = 0.001
+lr = 0.1
 fl_param = {
     'output_size': 10,          # number of units in output layer
     'client_num': client_num,   # number of clients
     'model': MnistCNN,  # model (use FEMnistCNN for FEMNIST dataset)
     'data': d,
     'lr': lr,           # learning rate
-    'E': 5,             # number of local iterations
-    'sigma': 0.5,       # noise level
-    'clip': 4,          # clipping norm
-    'batch_size': 128,  # number of samples per-batch
+    'E': 1,             # number of local iterations
+    'eps': 4.0,         # privacy budget
+    'delta': 1e-5,      # approximate differential privacy: (epsilon, delta)-DP
+    'q': 0.03,          # sampling rate
+    'clip': 32,         # clipping norm
+    'batch_size': 128,
     'device': device
 }
 ```
 
 ## Reference
-[1] McMahan, Brendan, Eider Moore, Daniel Ramage, Seth Hampson, and Blaise Aguera y Arcas. Communication-Efficient Learning of Deep Networks from Decentralized Data. In *Proc. Artificial Intelligence and Statistics (AISTATS)*, 2017.
+[1] McMahan, Brendan, Eider Moore, Daniel Ramage, Seth Hampson, and Blaise Aguera y Arcas. "Communication-Efficient Learning of Deep Networks from Decentralized Data." In *Proc. Artificial Intelligence and Statistics (AISTATS)*, 2017.
 
-[2] K. Wei, J. Li, M. Ding, C. Ma, H. H. Yang, F. Farokhi, S. Jin, T. Q. S. Quek, H. V. Poor, Federated Learning with Differential Privacy: Algorithms and Performance Analysis. In *IEEE Transactions on Information Forensics & Security*, 15, pp. 3454-3469, 2020.
+[2] Abadi, Martin, et al. "Deep learning with differential privacy." *Proceedings of the 2016 ACM SIGSAC conference on computer and communications security*. 2016.
+
+[3] TensorFlow Privacy: https://github.com/tensorflow/privacy
+
