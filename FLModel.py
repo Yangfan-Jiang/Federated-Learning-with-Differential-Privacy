@@ -80,7 +80,6 @@ class FLClient(nn.Module):
                 loss = criterion(pred_y, batch_y.long())
                 # bound l2 sensitivity (gradient clipping)
                 # clip each of the gradient in the "Lot"
-
                 for i in range(loss.size()[0]):
                     loss[i].backward(retain_graph=True)
                     torch.nn.utils.clip_grad_norm_(self.model.parameters(), max_norm=self.clip)
@@ -93,7 +92,7 @@ class FLClient(nn.Module):
 
         # Add Gaussian noise
         # 1. compute l2-sensitivity.
-        # 2. add noise
+        # 2. add gaussian noise
         # The sensitivity calculation formula used below is derived from an unpublished manuscript
         # Please derive and compute the l1/l2-sensitivity very carefully
         # Do not use the sensitivity calculation code below directly on any research experiments
@@ -139,8 +138,9 @@ class FLClient(nn.Module):
                     clipped_grads[name] += param.grad / len(idx)
                 self.model.zero_grad()
         # Add Gaussian noise
+        sensitivity = 2 * self.clip / len(idx)
         for name, param in self.model.named_parameters():
-            clipped_grads[name] += gaussian_noise(clipped_grads[name].shape, self.clip, self.sigma, device=self.device)
+            clipped_grads[name] += gaussian_noise(clipped_grads[name].shape, sensitivity, self.sigma, device=self.device)
         return clipped_grads.copy()
 
 
