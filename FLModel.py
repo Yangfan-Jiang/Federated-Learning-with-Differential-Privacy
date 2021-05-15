@@ -71,8 +71,8 @@ class FLClient(nn.Module):
             batch_size=self.BATCH_SIZE,
             shuffle=True
         )
-        clipped_grads = {name: torch.zeros_like(param) for name, param in self.model.named_parameters()}
         for e in range(self.E):
+            clipped_grads = {name: torch.zeros_like(param) for name, param in self.model.named_parameters()}
             optimizer.zero_grad()
             for batch_x, batch_y in sample_data_loader:
                 batch_x, batch_y = batch_x.to(self.device), batch_y.to(self.device)
