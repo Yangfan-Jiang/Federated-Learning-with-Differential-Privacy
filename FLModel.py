@@ -42,8 +42,6 @@ class FLClient(nn.Module):
         self.delta = delta
         self.q = q
         self.model = model(data[0].shape[1], output_size).to(self.device)
-        self.batch_model = model(data[0].shape[1], output_size).to(self.device)
-        self.recv_model = model(data[0].shape[1], output_size).to(self.device)
 
         # compute noise using moments accountant
         self.sigma = compute_noise(1, self.q, self.eps, self.T, self.delta, 1e-5)
@@ -51,7 +49,6 @@ class FLClient(nn.Module):
     def recv(self, model_param):
         """receive global model from aggregator (server)"""
         self.model.load_state_dict(copy.deepcopy(model_param))
-        self.recv_model.load_state_dict(copy.deepcopy(model_param))
 
     def update(self):
         """local model update"""

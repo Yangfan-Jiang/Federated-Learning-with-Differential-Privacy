@@ -35,7 +35,7 @@ fl_param = {
     'E': 1,             # number of local iterations
     'eps': 4.0,         # privacy budget
     'delta': 1e-5,      # approximate differential privacy: (epsilon, delta)-DP
-    'q': 0.03,          # sampling rate
+    'q': 0.05,          # sampling rate
     'clip': 32,         # clipping norm
     'tot_T': 150,       # number of aggregation times
     'batch_size': 128,
