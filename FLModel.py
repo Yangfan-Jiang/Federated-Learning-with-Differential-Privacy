@@ -62,8 +62,10 @@ class FLClient(nn.Module):
                 batch_size=self.BATCH_SIZE,
                 shuffle=True
             )
-            clipped_grads = {name: torch.zeros_like(param) for name, param in self.model.named_parameters()}
+            
             optimizer.zero_grad()
+
+            clipped_grads = {name: torch.zeros_like(param) for name, param in self.model.named_parameters()}
             for batch_x, batch_y in sample_data_loader:
                 batch_x, batch_y = batch_x.to(self.device), batch_y.to(self.device)
                 pred_y = self.model(batch_x.float())
@@ -75,13 +77,20 @@ class FLClient(nn.Module):
                     loss[i].backward(retain_graph=True)
                     torch.nn.utils.clip_grad_norm_(self.model.parameters(), max_norm=self.clip)
                     for name, param in self.model.named_parameters():
-                        clipped_grads[name] += param.grad / len(idx)
+                        clipped_grads[name] += param.grad 
                     self.model.zero_grad()
+                    
             # add gaussian noise
             for name, param in self.model.named_parameters():
-                clipped_grads[name] += gaussian_noise(clipped_grads[name].shape, self.clip, self.sigma, device=self.device) / len(idx)
+                clipped_grads[name] += gaussian_noise(clipped_grads[name].shape, self.clip, self.sigma, device=self.device)
+                
+            # scale back
+            for name, param in self.model.named_parameters():
+                clipped_grads[name] /= len(idx)
+            
             for name, param in self.model.named_parameters():
                 param.grad = clipped_grads[name]
+                
             optimizer.step()
 
 
@@ -164,8 +173,10 @@ class FLServer(nn.Module):
             self.clients[idx].update()
         self.broadcast(self.aggregated(idxs_users))
         acc = self.test_acc()
+        torch.cuda.empty_cache()
         return acc
 
     def set_lr(self, lr):
         for c in self.clients:
             c.lr = lr
+

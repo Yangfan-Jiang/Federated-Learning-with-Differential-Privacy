@@ -1,2 +1,4 @@
 /.idea/
 /FedCF/
+.ipynb_checkpoints/
+__pycache__/

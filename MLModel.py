@@ -1,10 +1,10 @@
-# Several basic machine learning models
+# Machine learning models
 import torch
 from torch import nn
 
 
 class LogisticRegression(nn.Module):
-    """A simple implementation of Logistic regression model"""
+    """Logistic regression"""
     def __init__(self, num_feature, output_size):
         super(LogisticRegression, self).__init__()
         self.linear = nn.Linear(num_feature, output_size)
@@ -14,7 +14,7 @@ class LogisticRegression(nn.Module):
 
 
 class MLP(nn.Module):
-    """A simple implementation of Deep Neural Network model"""
+    """Neural Networks"""
     def __init__(self, input_dim, output_dim):
         super(MLP, self).__init__()
         self.h1 = 600

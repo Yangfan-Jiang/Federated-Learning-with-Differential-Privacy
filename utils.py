@@ -1,6 +1,5 @@
 """
-Implementation of several useful tool
-Please copy this script to target path
+Useful tools
 """
 import numpy as np
 import random
@@ -38,6 +37,6 @@ def mnist_noniid(dataset, num_users):
 
 def gaussian_noise(data_shape, s, sigma, device=None):
     """
-    Gaussian noise for CDP-FedAVG-LS Algorithm
+    Gaussian noise
     """
     return torch.normal(0, sigma * s, data_shape).to(device)

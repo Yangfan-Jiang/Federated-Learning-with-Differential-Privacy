@@ -1,6 +1,6 @@
 # Federated Learning
 
-This is a simple implementation of **Federated Learning (FL)** with **Differential Privacy (DP)**. The bare FL model (without DP) is the reproduction of the paper [Communication-Efficient Learning of Deep Networks from Decentralized Data](https://arxiv.org/abs/1602.05629). Each client apply DP mechanism locally to perturb trained parameters before uploading to the parameter server. The gaussian noises are generated according to *moments accountant technique* [2] using [tensorflow-privacy]( https://github.com/tensorflow/privacy).
+This is a simple implementation of **Federated Learning (FL)** with **Differential Privacy (DP)**. The bare FL model (without DP) is the reproduction of the paper [Communication-Efficient Learning of Deep Networks from Decentralized Data](https://arxiv.org/abs/1602.05629). Each client train local model using DP-SGD ([2], [tensorflow-privacy]( https://github.com/tensorflow/privacy)) to perturb model parameters.
 
 ## Requirements
 - torch 1.7.1
@@ -31,7 +31,7 @@ fl_param = {
     'data': d,          # dataset
     'lr': lr,           # learning rate
     'E': 100,           # number of local iterations
-    'eps': 8.0,         # privacy budget for each global communication
+    'eps': 8.0,         # privacy budget
     'delta': 1e-5,      # approximate differential privacy: (epsilon, delta)-DP
     'q': 0.01,          # sampling rate
     'clip': 8,          # clipping norm
@@ -40,8 +40,7 @@ fl_param = {
     'device': device
 }
 ```
-Note that 'eps' is the privacy budget for **each** global communication
-You may use composition theorems to compute the total privacy budget
+
 
 ## Reference
 [1] McMahan, Brendan, Eider Moore, Daniel Ramage, Seth Hampson, and Blaise Aguera y Arcas. Communication-Efficient Learning of Deep Networks from Decentralized Data. In *Proc. Artificial Intelligence and Statistics (AISTATS)*, 2017.
