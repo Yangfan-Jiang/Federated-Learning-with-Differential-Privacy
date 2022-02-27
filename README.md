@@ -10,7 +10,7 @@ This is a simple implementation of **Federated Learning (FL)** with **Differenti
 ## Files
 > FLModel.py: definition of the FL client and FL server class
 
-> MLModel.py: CNN model for MNIST and FEMNIST datasets
+> MLModel.py: CNN model for MNIST datasets
 
 > utils.py: sample MNIST in a non-i.i.d. manner
 
@@ -18,7 +18,7 @@ This is a simple implementation of **Federated Learning (FL)** with **Differenti
 1. Download MNIST dataset
 2. Install [tensorflow-privacy]( https://github.com/tensorflow/privacy)
 2. Set parameters in test.py/test.ipynb
-3. Run ```python test.py``` or Execute test.ipynb to train model on MNIST dataset
+3. Execute test.ipynb to train model on MNIST dataset
 
 ### FL model parameters
 ```python
@@ -33,11 +33,9 @@ fl_param = {
     'E': 100,           # number of local iterations
     'eps': 8.0,         # privacy budget
     'delta': 1e-5,      # approximate differential privacy: (epsilon, delta)-DP
-    'q': 0.01,          # sampling rate
+    'q': 0.05,          # sampling rate
     'clip': 8,          # clipping norm
-    'tot_T': 5,         # number of aggregation times (communication rounds)
-    'batch_size': 128,
-    'device': device
+    'tot_T': 10,        # number of aggregation times (communication rounds)
 }
 ```
 
