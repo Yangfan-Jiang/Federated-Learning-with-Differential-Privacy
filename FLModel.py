@@ -132,6 +132,7 @@ class FLServer(nn.Module):
                                  self.sigma,
                                  self.device)
                         for i in range(self.client_num)]
+        
         self.global_model = fl_param['model'](self.input_size, fl_param['output_size']).to(self.device)
         self.weight = np.array([client.data_size * 1.0 for client in self.clients])
         self.broadcast(self.global_model.state_dict())

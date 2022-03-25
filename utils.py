@@ -6,7 +6,7 @@ import random
 import torch
 
 
-def mnist_noniid(dataset, num_users):
+def mnist_noniid(labels, num_users):
     """
     Sample non-I.I.D client data from MNIST dataset
     :param dataset:
@@ -19,7 +19,7 @@ def mnist_noniid(dataset, num_users):
     idx_shard = [i for i in range(num_shards)]
     dict_users = {i: np.array([], dtype='int64') for i in range(num_users)}
     idxs = np.arange(num_shards*num_imgs)
-    labels = dataset.targets.numpy()
+    labels = labels.numpy()
 
     # sort labels
     idxs_labels = np.vstack((idxs, labels))

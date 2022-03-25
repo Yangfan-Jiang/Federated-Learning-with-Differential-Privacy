@@ -12,14 +12,25 @@ class LogisticRegression(nn.Module):
     def forward(self, x):
         return self.linear(x)
 
-
+    
 class MLP(nn.Module):
     """Neural Networks"""
     def __init__(self, input_dim, output_dim):
         super(MLP, self).__init__()
-        self.h1 = 600
-        self.h2 = 300
-        self.h3 = 100
+        self.model = nn.Sequential(
+            nn.Linear(input_dim, 1000),
+            nn.ReLU(),
+
+            nn.Linear(1000, output_dim))
+
+    def forward(self, x):
+        return self.model(x)
+    
+    
+class three_layer_MLP(nn.Module):
+    """Neural Networks"""
+    def __init__(self, input_dim, output_dim):
+        super(three_layer_MLP, self).__init__()
         self.model = nn.Sequential(
             nn.Linear(input_dim, 600),
             nn.Dropout(0.2),
@@ -44,13 +55,11 @@ class MnistCNN(nn.Module):
         super(MnistCNN, self).__init__()
         self.layer1 = nn.Sequential(
             nn.Conv2d(1, 16, kernel_size=5, padding=2),
-            nn.BatchNorm2d(16),
             nn.ReLU(),
             nn.MaxPool2d(2))
         
         self.layer2 = nn.Sequential(
             nn.Conv2d(16, 32, kernel_size=5, padding=2),
-            nn.BatchNorm2d(32),
             nn.ReLU(),
             nn.MaxPool2d(2))
         
