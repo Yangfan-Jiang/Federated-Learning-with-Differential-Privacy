@@ -63,10 +63,10 @@ class FLClient(nn.Module):
                 shuffle=True
             )
             
-            optimizer.zero_grad()
 
-            clipped_grads = {name: torch.zeros_like(param) for name, param in self.model.named_parameters()}
             for batch_x, batch_y in sample_data_loader:
+                optimizer.zero_grad()
+                clipped_grads = {name: torch.zeros_like(param) for name, param in self.model.named_parameters()}
                 batch_x, batch_y = batch_x.to(self.device), batch_y.to(self.device)
                 pred_y = self.model(batch_x.float())
                 loss = criterion(pred_y, batch_y.long())
@@ -78,20 +78,21 @@ class FLClient(nn.Module):
                     torch.nn.utils.clip_grad_norm_(self.model.parameters(), max_norm=self.clip)
                     for name, param in self.model.named_parameters():
                         clipped_grads[name] += param.grad 
+                    batch_grads = copy.deepcopy(clipped_grads)
                     self.model.zero_grad()
                     
-            # add gaussian noise
-            for name, param in self.model.named_parameters():
-                clipped_grads[name] += gaussian_noise(clipped_grads[name].shape, self.clip, self.sigma, device=self.device)
+                # add gaussian noise
+                for name, param in self.model.named_parameters():
+                    clipped_grads[name] += gaussian_noise(clipped_grads[name].shape, self.clip, self.sigma, device=self.device)
                 
-            # scale back
-            for name, param in self.model.named_parameters():
-                clipped_grads[name] /= len(idx)
-            
-            for name, param in self.model.named_parameters():
-                param.grad = clipped_grads[name]
-                
-            optimizer.step()
+                # scale back
+                for name, param in self.model.named_parameters():
+                    clipped_grads[name] /= self.BATCH_SIZE
+                batch_grads = copy.deepcopy(clipped_grads)
+                for name, param in self.model.named_parameters():
+                    param.grad = batch_grads[name]
+
+                optimizer.step()
 
 
 
