@@ -80,17 +80,18 @@ class FLClient(nn.Module):
                         clipped_grads[name] += param.grad 
                     self.model.zero_grad()
                     
-            # add gaussian noise
+            # add Gaussian noise
             for name, param in self.model.named_parameters():
                 clipped_grads[name] += gaussian_noise(clipped_grads[name].shape, self.clip, self.sigma, device=self.device)
                 
             # scale back
             for name, param in self.model.named_parameters():
-                clipped_grads[name] /= len(idx)
+                clipped_grads[name] /= (self.data_size*self.q)
             
             for name, param in self.model.named_parameters():
                 param.grad = clipped_grads[name]
-                
+            
+            # update local model
             optimizer.step()
 
 
