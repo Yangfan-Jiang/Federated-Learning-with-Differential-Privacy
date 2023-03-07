@@ -170,7 +170,8 @@ class FLServer(nn.Module):
         return acc
 
     def global_update(self):
-        idxs_users = np.random.choice(range(len(self.clients)), int(self.C * len(self.clients)), replace=False)
+        # idxs_users = np.random.choice(range(len(self.clients)), int(self.C * len(self.clients)), replace=False)
+        idxs_users = np.sort(np.random.choice(range(len(self.clients)), int(self.C * len(self.clients)), replace=False))
         for idx in idxs_users:
             self.clients[idx].update()
         self.broadcast(self.aggregated(idxs_users))
