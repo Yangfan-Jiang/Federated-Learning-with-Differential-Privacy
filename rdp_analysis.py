@@ -30,7 +30,7 @@ def search_dp(q, sigma, bad_event, iters=1):
     this function returns the corresponding DP budget.
     """
     min_dp = 1e5
-    for alpha in list(range(2, 101))+[256, 512, 1024]:
+    for alpha in list(range(2, 101)):
         rdp = iters * compute_rdp(alpha, q, sigma)
         dp = rdp2dp(rdp, bad_event, alpha)
         min_dp = min(min_dp, dp)
@@ -38,7 +38,7 @@ def search_dp(q, sigma, bad_event, iters=1):
     
 def calibrating_sampled_gaussian(q, eps, bad_event, iters=1, err=1e-4):
     """
-    Calibrating noise to privacy budgets
+    Calibrate noise to privacy budgets
     """
     sigma_max = 100
     sigma_min = 0.1
