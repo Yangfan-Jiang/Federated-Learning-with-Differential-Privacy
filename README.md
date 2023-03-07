@@ -2,6 +2,9 @@
 
 This is a simple implementation of **Federated Learning (FL)** with **Differential Privacy (DP)**. The bare FL model (without DP) is the reproduction of the paper [Communication-Efficient Learning of Deep Networks from Decentralized Data](https://arxiv.org/abs/1602.05629). Each client train local model using DP-SGD ([2], [tensorflow-privacy]( https://github.com/tensorflow/privacy)) to perturb model parameters.
 
+TODO:
+[ ] rdp_analysis.py: RDP for subsampled Gaussian [4], convert RDP to DP by Proposition 12 of [5] (tighter privacy analysis than [2, 3]).
+
 ## Requirements
 - torch 1.7.1
 - tensorflow-privacy 0.5.1
@@ -41,9 +44,12 @@ fl_param = {
 
 
 ## Reference
-[1] McMahan, Brendan, Eider Moore, Daniel Ramage, Seth Hampson, and Blaise Aguera y Arcas. Communication-Efficient Learning of Deep Networks from Decentralized Data. In *Proc. Artificial Intelligence and Statistics (AISTATS)*, 2017.
+[1] McMahan, Brendan, Eider Moore, Daniel Ramage, Seth Hampson, and Blaise Aguera y Arcas. Communication-Efficient Learning of Deep Networks from Decentralized Data. In *AISTATS*, 2017.
 
-[2] Abadi, Martin, et al. Deep learning with differential privacy. *Proceedings of the 2016 ACM SIGSAC conference on computer and communications security*. 2016.
+[2] Abadi, Martin, et al. Deep learning with differential privacy. In *CCS*. 2016.
 
 [3] TensorFlow Privacy: https://github.com/tensorflow/privacy
 
+[4] Mironov, Ilya, Kunal Talwar, and Li Zhang. "R\'enyi differential privacy of the sampled gaussian mechanism." arXiv preprint 2019.
+
+[5] Canonne, Clément L., Gautam Kamath, and Thomas Steinke. The discrete gaussian for differential privacy. In *NeurIPS* , 2020.
