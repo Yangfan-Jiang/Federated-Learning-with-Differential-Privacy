@@ -7,15 +7,16 @@ getcontext().prec = 128
 
 def rdp2dp(rdp, bad_event, alpha):
     """
-    convert RDP to DP, ref (Proposition 12):
-    Canonne, Clément L., Gautam Kamath, and Thomas Steinke. The discrete gaussian for differential privacy. In NeurIPS, 2020.
+    convert RDP to DP, ref:
+    - Canonne, Clément L., Gautam Kamath, and Thomas Steinke. The discrete gaussian for differential privacy. In NeurIPS, 2020. (See Proposition 12)
+    - Asoodeh, S., Liao, J., Calmon, F.P., Kosut, O. and Sankar, L., A better bound gives a hundred rounds: Enhanced privacy guarantees via f-divergences. In ISIT, 2020. (See Lemma 1)
     """
     return rdp + 1.0/(alpha-1) * (np.log(1.0/bad_event) + (alpha-1)*np.log(1-1.0/alpha) - np.log(alpha))
 
 def compute_rdp(alpha, q, sigma):
     """
     RDP for subsampled Gaussian mechanism, ref:
-    - Mironov, Ilya, Kunal Talwar, and Li Zhang. "R\'enyi differential privacy of the sampled gaussian mechanism." arXiv preprint 2019.
+    - Mironov, Ilya, Kunal Talwar, and Li Zhang. R\'enyi differential privacy of the sampled gaussian mechanism. arXiv preprint 2019.
     """
     sum_ = Decimal(0.0)
     for k in range(0, alpha+1):
