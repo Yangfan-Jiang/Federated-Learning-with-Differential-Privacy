@@ -1,6 +1,6 @@
 # Federated Learning
 
-This is a simple implementation of **Federated Learning (FL)** with **Differential Privacy (DP)**. The bare FL model (without DP) is the reproduction of the paper [Communication-Efficient Learning of Deep Networks from Decentralized Data](https://arxiv.org/abs/1602.05629). Each client train local model using DP-SGD ([2], [tensorflow-privacy]( https://github.com/tensorflow/privacy)) to perturb model parameters.
+This is an implementation of **Federated Learning (FL)** with **Differential Privacy (DP)**. The FL algorithm is FedAvg, based on the paper [Communication-Efficient Learning of Deep Networks from Decentralized Data](https://arxiv.org/abs/1602.05629). Each client trains local model using DP-SGD ([2], [tensorflow-privacy]( https://github.com/tensorflow/privacy)) to perturb model parameters.
 
 TODO:
 - [ ] rdp_analysis.py: RDP for subsampled Gaussian [4], convert RDP to DP by Ref. [5, 6] (tighter privacy analysis than [2, 3]).

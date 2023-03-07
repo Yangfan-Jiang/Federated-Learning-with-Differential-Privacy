@@ -25,9 +25,45 @@ def compute_rdp(alpha, q, sigma):
     return float(rdp)
         
 def search_dp(q, sigma, bad_event, iters=1):
+    """
+    Given the sampling rate, variance of Gaussian noise, and privacy parameter delta, 
+    this function returns the corresponding DP budget.
+    """
     min_dp = 1e5
     for alpha in list(range(2, 101))+[256, 512, 1024]:
         rdp = iters * compute_rdp(alpha, q, sigma)
         dp = rdp2dp(rdp, bad_event, alpha)
         min_dp = min(min_dp, dp)
     return min_dp
+    
+def calibrating_sampled_gaussian(q, eps, bad_event, iters=1, err=1e-4):
+    """
+    Calibrating noise to privacy budgets
+    """
+    sigma_max = 100
+    sigma_min = 0.1
+    
+    def binary_search(left, right):
+        mid = (left + right) / 2
+        
+        lbd = search_dp(q, mid, bad_event, iters)
+        ubd = search_dp(q, left, bad_event, iters)
+        
+        if ubd > eps and lbd > eps:    # min noise & mid noise are too small
+            left = mid
+        elif ubd > eps and lbd < eps:  # mid noise is too large
+            right = mid
+        else:
+            print("an error occurs in func: binary search!")
+            return -1
+        return left, right
+        
+    # check
+    if search_dp(q, sigma_max, bad_event, iters) > eps:
+        print("noise > 100")
+        return -1
+    
+    while sigma_max-sigma_min > err:
+        sigma_min, sigma_max = binary_search(sigma_min, sigma_max)
+
+    return sigma_max
