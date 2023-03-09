@@ -7,15 +7,16 @@ getcontext().prec = 128
 
 def rdp2dp(rdp, bad_event, alpha):
     """
-    convert RDP to DP, ref:
+    convert RDP to DP, Ref:
     - Canonne, Clément L., Gautam Kamath, and Thomas Steinke. The discrete gaussian for differential privacy. In NeurIPS, 2020. (See Proposition 12)
     - Asoodeh, S., Liao, J., Calmon, F.P., Kosut, O. and Sankar, L., A better bound gives a hundred rounds: Enhanced privacy guarantees via f-divergences. In ISIT, 2020. (See Lemma 1)
     """
     return rdp + 1.0/(alpha-1) * (np.log(1.0/bad_event) + (alpha-1)*np.log(1-1.0/alpha) - np.log(alpha))
 
+
 def compute_rdp(alpha, q, sigma):
     """
-    RDP for subsampled Gaussian mechanism, ref:
+    RDP for subsampled Gaussian mechanism, Ref:
     - Mironov, Ilya, Kunal Talwar, and Li Zhang. R\'enyi differential privacy of the sampled gaussian mechanism. arXiv preprint 2019.
     """
     sum_ = Decimal(0.0)
@@ -23,7 +24,8 @@ def compute_rdp(alpha, q, sigma):
         sum_ += Decimal(comb(alpha, k)) * Decimal(1-q)**Decimal(alpha-k) * Decimal(q**k) * Decimal(np.e)**(Decimal(k**2-k)/Decimal(2*sigma**2))
     rdp = sum_.ln() / Decimal(alpha-1)
     return float(rdp)
-        
+ 
+    
 def search_dp(q, sigma, bad_event, iters=1):
     """
     Given the sampling rate, variance of Gaussian noise, and privacy parameter delta, 
@@ -36,7 +38,8 @@ def search_dp(q, sigma, bad_event, iters=1):
         min_dp = min(min_dp, dp)
     return min_dp
     
-def calibrating_sampled_gaussian(q, eps, bad_event, iters=1, err=1e-4):
+    
+def calibrating_sampled_gaussian(q, eps, bad_event, iters=1, err=1e-3):
     """
     Calibrate noise to privacy budgets
     """
@@ -65,5 +68,4 @@ def calibrating_sampled_gaussian(q, eps, bad_event, iters=1, err=1e-4):
     
     while sigma_max-sigma_min > err:
         sigma_min, sigma_max = binary_search(sigma_min, sigma_max)
-
     return sigma_max

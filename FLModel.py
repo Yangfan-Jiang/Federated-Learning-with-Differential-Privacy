@@ -3,7 +3,7 @@ import torch
 from torch import nn
 from torch.utils.data import Dataset, DataLoader, TensorDataset
 from utils import gaussian_noise
-from tensorflow_privacy.privacy.analysis.compute_noise_from_budget_lib import compute_noise
+from rdp_analysis import calibrating_sampled_gaussian
 
 import numpy as np
 import copy
@@ -48,8 +48,9 @@ class FLClient(nn.Module):
         """local model update"""
         self.model.train()
         criterion = nn.CrossEntropyLoss(reduction='none')
-        optimizer = torch.optim.SGD(self.model.parameters(), lr=self.lr, momentum=0.0)
-
+        optimizer = torch.optim.SGD(self.model.parameters(), lr=self.lr, momentum=0.9)
+        # optimizer = torch.optim.Adam(self.model.parameters())
+        
         for e in range(self.E):
             # randomly select q fraction samples from data
             # according to the privacy analysis of moments accountant
@@ -120,7 +121,11 @@ class FLServer(nn.Module):
         self.lr = fl_param['lr']
         
         # compute noise using moments accountant
-        self.sigma = compute_noise(1, fl_param['q'], fl_param['eps'], fl_param['E']*fl_param['tot_T'], fl_param['delta'], 1e-5)
+        # self.sigma = compute_noise(1, fl_param['q'], fl_param['eps'], fl_param['E']*fl_param['tot_T'], fl_param['delta'], 1e-5)
+        
+        # calibration with subsampeld Gaussian mechanism under composition 
+        self.sigma = calibrating_sampled_gaussian(fl_param['q'], fl_param['eps'], fl_param['delta'], iters=fl_param['E']*fl_param['tot_T'], err=1e-3)
+        print("sigma =", self.sigma)
         
         self.clients = [FLClient(fl_param['model'],
                                  fl_param['output_size'],
