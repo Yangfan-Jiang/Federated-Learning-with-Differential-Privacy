@@ -1,7 +1,7 @@
 # Machine learning models
 import torch
 from torch import nn
-
+from kymatio.torch import Scattering2D
 
 class MNIST_CNN(nn.Module):
     """
@@ -34,6 +34,53 @@ class MNIST_CNN(nn.Module):
         x = self.fc(x)
         return x
     
+    
+def get_scatter_transform():
+    shape = (28, 28, 1)
+    scattering = Scattering2D(J=2, shape=shape[:2])
+    K = 81 * shape[2]
+    (h, w) = shape[:2]
+    return scattering, K, (h//4, w//4)
+
+
+class ScatterLinear(nn.Module):
+    """
+    ScatterNet model used in the following paper
+    - Tramer, Florian, and Dan Boneh. Differentially Private Learning Needs Better Features (or Much More Data). In ICLR 2021. 
+    See https://github.com/ftramer/Handcrafted-DP/blob/main/models.py
+    """
+    def __init__(self, in_channels, hw_dims, input_norm=None, classes=10, clip_norm=None, **kwargs):
+        super(ScatterLinear, self).__init__()
+        self.K = in_channels
+        self.h = hw_dims[0]
+        self.w = hw_dims[1]
+        self.fc = None
+        self.norm = None
+        self.clip = None
+        self.build(input_norm, classes=classes, clip_norm=clip_norm, **kwargs)
+
+    def build(self, input_norm=None, num_groups=None, bn_stats=None, clip_norm=None, classes=10):
+        self.fc = nn.Linear(self.K * self.h * self.w, classes)
+
+        if input_norm is None:
+            self.norm = nn.Identity()
+        elif input_norm == "GroupNorm":
+            self.norm = nn.GroupNorm(num_groups, self.K, affine=False)
+        else:
+            self.norm = lambda x: standardize(x, bn_stats)
+
+        if clip_norm is None:
+            self.clip = nn.Identity()
+        else:
+            self.clip = ClipLayer(clip_norm)
+
+    def forward(self, x):
+        x = self.norm(x.view(-1, self.K, self.h, self.w))
+        x = self.clip(x)
+        x = x.reshape(x.size(0), -1)
+        x = self.fc(x)
+        return x
+
     
 class LogisticRegression(nn.Module):
     """Logistic regression"""

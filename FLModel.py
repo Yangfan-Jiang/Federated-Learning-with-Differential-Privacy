@@ -5,6 +5,8 @@ from torch.utils.data import Dataset, DataLoader, TensorDataset
 from utils import gaussian_noise
 from rdp_analysis import calibrating_sampled_gaussian
 
+from MLModel import *
+
 import numpy as np
 import copy
 
@@ -38,7 +40,10 @@ class FLClient(nn.Module):
         self.E = E
         self.clip = clip
         self.q = q
-        self.model = model(data[0].shape[1], output_size).to(self.device)
+        if model == 'scatter':
+            self.model = ScatterLinear(81, (7, 7), input_norm="GroupNorm", num_groups=27).to(self.device)
+        else:
+            self.model = model(data[0].shape[1], output_size).to(self.device)
 
     def recv(self, model_param):
         """receive global model from aggregator (server)"""
@@ -125,7 +130,7 @@ class FLServer(nn.Module):
         
         # calibration with subsampeld Gaussian mechanism under composition 
         self.sigma = calibrating_sampled_gaussian(fl_param['q'], fl_param['eps'], fl_param['delta'], iters=fl_param['E']*fl_param['tot_T'], err=1e-3)
-        print("sigma =", self.sigma)
+        print("noise scale =", self.sigma)
         
         self.clients = [FLClient(fl_param['model'],
                                  fl_param['output_size'],
@@ -139,7 +144,11 @@ class FLServer(nn.Module):
                                  self.device)
                         for i in range(self.client_num)]
         
-        self.global_model = fl_param['model'](self.input_size, fl_param['output_size']).to(self.device)
+        if fl_param['model'] == 'scatter':
+            self.global_model = ScatterLinear(81, (7, 7), input_norm="GroupNorm", num_groups=27).to(self.device)
+        else:
+            self.global_model = fl_param['model'](self.input_size, fl_param['output_size']).to(self.device)
+        
         self.weight = np.array([client.data_size * 1.0 for client in self.clients])
         self.broadcast(self.global_model.state_dict())
 
